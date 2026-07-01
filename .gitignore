@@ -39,6 +39,7 @@
 
 # C Excutable
 main_app
+bubblesort
 
 # Debug files
 *.dSYM/
