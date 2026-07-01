@@ -37,6 +37,9 @@
 *.hex
 *.class
 
+# C Excutable
+main_app
+
 # Debug files
 *.dSYM/
 *.su
