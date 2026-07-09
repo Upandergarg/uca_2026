@@ -40,7 +40,8 @@
 # C Excutable
 main_app
 bubblesort
-
+helloC
+auditlog
 # Debug files
 *.dSYM/
 *.su
