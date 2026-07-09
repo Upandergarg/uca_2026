@@ -42,6 +42,7 @@ main_app
 bubblesort
 helloC
 auditlog
+sortingAnalysis
 # Debug files
 *.dSYM/
 *.su
