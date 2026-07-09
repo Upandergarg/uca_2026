@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    // ---------- ADD ----------
+    // add
     if (strcmp(argv[1], "--add") == 0)
     {
         if (argc < 3)
@@ -38,14 +38,14 @@ int main(int argc, char *argv[])
         close(fd);
     }
 
-    // ---------- VIEW ----------
+    // view
     else if (strcmp(argv[1], "--view") == 0)
     {
         fd = open("audit.log", O_RDONLY);
 
         while (read(fd, &ch, 1) > 0)
         {
-            // Print line number at the start of each line
+            // print numbering once for a line
             if (newLine)
             {
                 len = sprintf(num, "%d: ", line);
@@ -54,10 +54,10 @@ int main(int argc, char *argv[])
                 newLine = 0;
             }
 
-            // Print the character
+            // from buffer to stdout
             write(1, &ch, 1);
 
-            // If end of line, prepare for next line
+            // For end line, and for next line
             if (ch == '\n')
             {
                 line++;
