@@ -94,7 +94,204 @@ double measureBubbleSort(int arr[], int n)
 
 }
 
+//insertion sort
+void insertionSort(int arr[], int n)
+{
+    int i, key, j;
 
+    for (i = 1; i < n; i++)
+    {
+        key = arr[i];
+        j = i - 1;
+
+        while (j >= 0 && arr[j] > key)
+        {
+            arr[j + 1] = arr[j];
+            j--;
+        }
+
+        arr[j + 1] = key;
+    }
+}
+
+double measureInsertionSort(int arr[], int n)
+{
+    clock_t start = clock();
+    insertionSort(arr, n);
+    clock_t end = clock();
+
+    return ((double)(end - start) * 1000) / CLOCKS_PER_SEC;
+}
+
+
+//quick sort
+int partition(int arr[], int low, int high)
+{
+    int pivot = arr[high];
+    int i = low - 1;
+    int temp;
+
+    for (int j = low; j < high; j++)
+    {
+        if (arr[j] < pivot)
+        {
+            i++;
+
+            temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+        }
+    }
+
+    temp = arr[i + 1];
+    arr[i + 1] = arr[high];
+    arr[high] = temp;
+
+    return i + 1;
+}
+
+void quickSort(int arr[], int low, int high)
+{
+    if (low < high)
+    {
+        int pi = partition(arr, low, high);
+
+        quickSort(arr, low, pi - 1);
+        quickSort(arr, pi + 1, high);
+    }
+}
+
+double measureQuickSort(int arr[], int n)
+{
+    clock_t start = clock();
+
+    quickSort(arr, 0, n - 1);
+
+    clock_t end = clock();
+
+    return ((double)(end - start) * 1000) / CLOCKS_PER_SEC;
+}
+
+//merge sort 
+void merge(int arr[], int left, int mid, int right)
+{
+    int n1 = mid - left + 1;
+    int n2 = right - mid;
+
+    int L[n1], R[n2];
+
+    for (int i = 0; i < n1; i++)
+        L[i] = arr[left + i];
+
+    for (int j = 0; j < n2; j++)
+        R[j] = arr[mid + 1 + j];
+
+    int i = 0, j = 0, k = left;
+
+    while (i < n1 && j < n2)
+    {
+        if (L[i] <= R[j])
+        {
+            arr[k] = L[i];
+            i++;
+        }
+        else
+        {
+            arr[k] = R[j];
+            j++;
+        }
+        k++;
+    }
+
+    while (i < n1)
+    {
+        arr[k] = L[i];
+        i++;
+        k++;
+    }
+
+    while (j < n2)
+    {
+        arr[k] = R[j];
+        j++;
+        k++;
+    }
+}
+
+void mergeSort(int arr[], int left, int right)
+{
+    if (left < right)
+    {
+        int mid = left + (right - left) / 2;
+
+        mergeSort(arr, left, mid);
+        mergeSort(arr, mid + 1, right);
+
+        merge(arr, left, mid, right);
+    }
+}
+
+double measureMergeSort(int arr[], int n)
+{
+    clock_t start = clock();
+
+    mergeSort(arr, 0, n - 1);
+
+    clock_t end = clock();
+
+    return ((double)(end - start) * 1000) / CLOCKS_PER_SEC;
+}
+
+//heap sort
+
+void heapify(int arr[], int n, int i)
+{
+    int largest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+    int temp;
+
+    if (left < n && arr[left] > arr[largest])
+        largest = left;
+
+    if (right < n && arr[right] > arr[largest])
+        largest = right;
+
+    if (largest != i)
+    {
+        temp = arr[i];
+        arr[i] = arr[largest];
+        arr[largest] = temp;
+
+        heapify(arr, n, largest);
+    }
+}
+
+void heapSort(int arr[], int n)
+{
+    for (int i = n / 2 - 1; i >= 0; i--)
+        heapify(arr, n, i);
+
+    for (int i = n - 1; i > 0; i--)
+    {
+        int temp = arr[0];
+        arr[0] = arr[i];
+        arr[i] = temp;
+
+        heapify(arr, i, 0);
+    }
+}
+
+double measureHeapSort(int arr[], int n)
+{
+    clock_t start = clock();
+
+    heapSort(arr, n);
+
+    clock_t end = clock();
+
+    return ((double)(end - start) * 1000) / CLOCKS_PER_SEC;
+}
 
 
 int main()
@@ -104,7 +301,7 @@ int main()
     int sizes[] = {8000, 12000, 16000, 20000, 24000, 28000, 32000, 36000};
     int iterations = 8;
 
-    printf("Selection Sort Runtime Analysis\n\n");
+    printf("Sorting  Runtime Analysis\n\n");
 
     for (int i = 0; i < iterations; i++)
     {
@@ -113,47 +310,83 @@ int main()
         int *original = (int *)malloc(n * sizeof(int));
         int *copy = (int *)malloc(n * sizeof(int));
 
-        printf("Array Size = %d\n", n);
+        printf("\n\n");
+        printf("Array Size : %d\n", n);
+        printf("\n");
 
 
 	//genrating random array for all sortings
+	printf("\nRandom Array\n");
         generateRandomArray(original, n);
 
 
         copyArray(original, copy, n);
-        printf("Selectionsort (Random)   : %.2f ms\n", measureSelectionSort(copy, n));
+        printf("Selectionsort : %.2f ms\n", measureSelectionSort(copy, n));
  
         copyArray(original, copy, n);
-        printf("Bubble Sort (Random)   : %.2f ms\n",measureBubbleSort(copy, n));
+        printf("Bubble Sort : %.2f ms\n",measureBubbleSort(copy, n));
+
+        copyArray(original, copy, n);
+        printf("Insertion Sort  : %.2f ms\n", measureInsertionSort(copy, n));
+
+	copyArray(original, copy, n);
+        printf("Quick Sort  : %.2f ms\n", measureQuickSort(copy, n));
+
+	copyArray(original, copy, n);
+        printf("Merge Sort  : %.2f ms\n", measureMergeSort(copy, n));
 
 
+	copyArray(original, copy, n);
+        printf("Heap Sort   : %.2f ms\n", measureHeapSort(copy, n));
 
 
-
+	printf("\nAscending Array\n");
         //generating ascending array
         generateAscendingArray(original, n);
 
         copyArray(original, copy, n);
-        printf("Selection sort (Ascending)  : %.2f ms\n", measureSelectionSort(copy, n));
+        printf("Selection sort  : %.2f ms\n", measureSelectionSort(copy, n));
      
         copyArray(original, copy, n);
-        printf("Bubble Sort (Ascending)   : %.2f ms\n",measureBubbleSort(copy, n)); 
+        printf("Bubble Sort   : %.2f ms\n",measureBubbleSort(copy, n)); 
   
+        copyArray(original, copy, n);
+        printf("Insertion Sort   : %.2f ms\n", measureInsertionSort(copy, n));
 
+        copyArray(original, copy, n);
+        printf("Quick Sort   : %.2f ms\n", measureQuickSort(copy, n));
 
+	copyArray(original, copy, n);
+        printf("Merge Sort  : %.2f ms\n", measureMergeSort(copy, n));
+
+	copyArray(original, copy, n);
+        printf("Heap Sort    : %.2f ms\n", measureHeapSort(copy, n));
+	printf("\nDescending Array\n");
 
 
 	//generating descending array 
         generateDescendingArray(original, n);
 
         copyArray(original, copy, n);
-        printf("Selection Sort (Descending) : %.2f ms\n\n", measureSelectionSort(copy, n));
+        printf("Selection Sort  : %.2f ms\n", measureSelectionSort(copy, n));
 
 
         copyArray(original, copy, n);
-        printf("Bubble Sort (Descending)   : %.2f ms\n\n", measureBubbleSort(copy, n));
+        printf("Bubble Sort    : %.2f ms\n", measureBubbleSort(copy, n));
+
+	copyArray(original, copy, n);
+        printf("Insertion Sort   : %.2f ms\n", measureInsertionSort(copy, n));
+
+        copyArray(original, copy, n);
+        printf("Quick Sort   : %.2f ms\n", measureQuickSort(copy, n));
 
 
+	copyArray(original, copy, n);
+        printf("Merge Sort    : %.2f ms\n", measureMergeSort(copy, n));
+
+
+	copyArray(original, copy, n);
+        printf("Heap Sort    : %.2f ms\n", measureHeapSort(copy, n));
 
 
         free(original);
@@ -162,3 +395,4 @@ int main()
 
     return 0;
 }
+
